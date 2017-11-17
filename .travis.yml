@@ -1,0 +1,20 @@
+sudo: required
+services:
+- docker
+language: bash
+script:
+# prepare qemu
+- docker run --rm --privileged multiarch/qemu-user-static:register --reset
+# build image
+- docker build -t 21studios/rpi-unicornhat .
+# test image
+- docker run 21studios/rpi-unicornhat mysql --version
+# push image
+- >
+  if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+    docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
+    TAG=$(grep "ENV MYSQL_VERSION" Dockerfile | awk 'NF>1{print $NF}')
+    docker tag 21studios/rpi-unicornhat 21studios/rpi-unicornhat:$TAG
+    docker push 21studios/rpi-unicornhat:$TAG
+    docker push 21studios/rpi-unicornhat
+  fi
