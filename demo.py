@@ -25,18 +25,20 @@ def set_val(items):
                 item = items[i]
                 i += 1
                 phase = item.status.phase
-                if phase == "Running":
+                elif phase == "Running":
                     #print("Setting {}/{} to green".format(w, h))
                     unicorn.set_pixel(w, h, 0, 255, 0)
-                if phase == "Pending":
+                elif phase == "Pending":
                     #print("Setting {}/{} to yellow".format(w, h))
                     unicorn.set_pixel(w, h, 255, 255, 0)
-                if phase == "Failed":
+                elif phase == "Failed":
                     #print("Setting {}/{} to red".format(w, h))
                     unicorn.set_pixel(w, h, 255, 0, 0)
-                if phase == "Unknown":
+                elif phase == "Unknown":
                     #print("Setting {}/{} to pink".format(w, h))
                     unicorn.set_pixel(w, h, 255, 0, 255)
+                else:
+                    print("Unknown Phase: {}".format(phase))
     unicorn.show()
 
 while True:
