@@ -5,7 +5,6 @@ language: bash
 script:
 - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 - docker build -t 21studios/rpi-unicornhat .
-- docker run 21studios/rpi-unicornhat mysql --version
 - |
   if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
