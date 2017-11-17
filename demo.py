@@ -45,24 +45,3 @@ while True:
     ret = v1.list_pod_for_all_namespaces(watch=False)
     set_val(ret.items)
     time.sleep(5)
-
-#
-#import socket
-#
-#
-#IP = '0.0.0.0'
-#PORT = 2808
-#
-#s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#s.bind((IP, PORT))
-#
-#while True:
-#    data, addr = s.recvfrom(5) # 1 byte for LED, 1 for R/G/B
-#    ba = bytearray(data)
-#    w = ba[0]
-#    h = ba[1]
-#    r = ba[2]
-#    g = ba[3]
-#    b = ba[4]
-#    unicorn.set_pixel(w, h, r, g, b)
-#    unicorn.show()
