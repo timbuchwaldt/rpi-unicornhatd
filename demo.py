@@ -30,3 +30,4 @@ while True:
     g = ba[3]
     b = ba[4]
     unicorn.set_pixel(w, h, r, g, b)
+    unicorn.show()
