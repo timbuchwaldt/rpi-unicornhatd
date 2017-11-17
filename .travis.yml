@@ -12,7 +12,15 @@ script:
     docker push 21studios/rpi-unicornhat:latest
     docker push 21studios/rpi-unicornhat
   fi
+- if [[ ${TRAVIS_BRANCH} == "master" ]] && [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then mkdir -p $(dirname ${DOCKER_CACHE_FILE}) ; docker save $(docker history -q ${DOCKER_REPOSITORY}:${TRAVIS_COMMIT} | grep -v '<missing>') | gzip > ${DOCKER_CACHE_FILE}; fi
+
 env:
   global:
   - secure: Ct0XjuwbcUWTPdi3NQHqeSgZbkWEW21xnc2I5DDniYoirwPNGIbEmVU0XD732lS8fFwiK6x+SzoPnMq/Y+yTHR0/vYccR/Bs2BOFcgNOCevYsVJjzlT1PQisjqMN9CXo2wiX5cKP0tR0e7ug1IaJSDiUaHlr7YdM1tmItQC+9h41B9qeXHVhXPw5JYBEQO3SK4uS2/maNS2H1TFxD2twfwj7jxHoAuy3+LMvt1lQCcVx/Bt38lUF262oz/ZnY134R0ZMBqDPKOxhSIF9NHnS/Fc4avDZ8ft1/yNr45PwmB08+gWlGJ5lbtqKFDHqaUf9O6gsVwz7w6kCDTnd7IrFN4tQijZrjiR5hoLEWiGVRpyTxue4nZ+Qb4zmg3+uBf/D++m44nD+7q3ifkyan0yZolCs4MHXFkhIpXZQqclGZZYOOwNhkI5mD8UCPoIF3hSa85ypE66FEmLx1q54DpSltd9p1CAdv11ssbUzSRmYSxJXKbMwgC4hqAH2VEtloxtSJ+QOWeW7Usu60OI+z2uc6LTl24B31He6sOKCqsTeMkU2lQFtHkJNEwmZkuk3QsuJ1Vwh8RcnDGL/gOInxS98D5emwRaY6Q+U3uGu5JCt2DU5kw6s5FfVmlcnLzOTdDkANA2dGBJcqzND0cIweJbZomWWJkXPgRYjWriYUMD6kBE=
   - secure: jci4M3fzuTgjYt+IYCLDuP/OoIT6rsJgCFbuHE/iZNc2qXYGD7yuVGneDZWkKlLwfYi5x1ubA9P8y0pB47FEmgTxYRByvoiaxowtOU+93PvmcWAzYdgDclrJoJDs1JAr0pvTHe0/o35VycqjbKTHYnOlti/35pmGzEtMmtjCsCrGh4RiI4Lsw5eBroF+zitlrvFVHY6/Dc4yLcd+H8dwtcbgB/rjHGvE+9ezqH8AW1ndwb7sKW/b65Dl4PrTkd6Bm6trr15PvxAIPFPs7fk718VTYUxfszxDtld96cEqK6raQORKStSkG1sfvqfPCKvgNCUEi3LR+iWMugnz1OrCbNvS9CtVpeZzkvZs3SVmCptJFFh5Ei9v6AonN9qdJZ5R8p0QkVkCKvh5KwYWHsGsDB1CDtfV5C/jLMC6eAFGdLtXj5YKhNSREzOlkpEgNlSa6Rl7nudl6vGqa4NzLYD8jDDAvnmVYBczSGLavTVYTwmqz54ohGD2oW4SgAEQIdHobque7CWAYCMxy6zYmV8uXHmgrSbTKGJIS43aVDaJbX6RZ/kGK4Xn41GItklGfNN2tGx5GIqrZcuWBzV9zonN8IvmEcRxjCyMeG2LkUxQSMN9LRK654XD4ZDBcwa1NevcVPYi6kLFOH9QP8qBwxoOcn8XLEF2LrCvkoIYR3S0Hkc=
+cache:
+  directories:
+    - /home/travis/docker/
+
+before_install:
+  - if [ -f ${DOCKER_CACHE_FILE} ]; then gunzip -c ${DOCKER_CACHE_FILE} | docker load; fi
