@@ -1,0 +1,94 @@
+apiVersion: extensions/v1beta1 # for versions before 1.8.0 use apps/v1beta1
+kind: DaemonSet
+metadata:
+  name: unicornhat
+  namespace: kube-system
+  labels:
+    k8s-app: unicornhat
+spec:
+  selector:
+    matchLabels:
+      name: unicornhat
+  template:
+    metadata:
+      labels:
+        name: unicornhat
+    spec:
+      hostNetwork: true
+      containers:
+      - name: unicornhat
+        image: 21studios/rpi-unicornhat:latest
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        securityContext:
+          privileged: true
+        ports:
+          - containerPort: 2808
+            hostPort: 2808
+      serviceAccountName: unicornhat
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: unicornhat
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: unicornhat
+subjects:
+- kind: ServiceAccount
+  name: unicornhat
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: unicornhat
+  namespace: kube-system
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - endpoints
+  - nodes
+  - pods
+  - secrets
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: unicornhat
+  namespace: kube-system
