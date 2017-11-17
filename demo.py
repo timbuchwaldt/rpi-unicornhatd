@@ -11,24 +11,38 @@ v1 = client.CoreV1Api()
 
 
 unicorn.set_layout(unicorn.HAT)
-unicorn.rotation(0) # tested on pHAT/HAT with rotation 0, 90, 180 & 270
-unicorn.brightness(1)
+unicorn.rotation(0)
+unicorn.brightness(0.3)
 u_width,u_height=unicorn.get_shape()
+unicorn.clear()
 
-def set_val(myval):
-    unicorn.clear()
-    unicorn.show()
-    for w in range(0, u_width-1):
-        for h in range(0, u_height-1):
-            if myval > 0:
-                myval = myval-1
-                unicorn.set_pixel(w, h, 255, 255, 255)
+def set_val(items):
+    i = 0
+    for w in range(0, u_width):
+        for h in range(0, u_height):
+            if i < len(items):
+                item = items[i]
+                i += 1
+                phase = item.status.phase
+                print(phase)
+                if phase == "Running":
+                    print("Setting {}/{} to green".format(w, h))
+                    unicorn.set_pixel(w, h, 0, 255, 0)
+                if phase == "Pending":
+                    print("Setting {}/{} to yellow".format(w, h))
+                    unicorn.set_pixel(w, h, 255, 255, 0)
+                if phase == "Failed":
+                    print("Setting {}/{} to red".format(w, h))
+                    unicorn.set_pixel(w, h, 255, 0, 0)
+                if phase == "Failed":
+                    print("Setting {}/{} to pink".format(w, h))
+                    unicorn.set_pixel(w, h, 255, 0, 255)
     unicorn.show()
 
 while True:
     ret = v1.list_pod_for_all_namespaces(watch=False)
-    set_val(len(ret.items))
-    time.sleep(2)
+    set_val(ret.items)
+    time.sleep(5)
 
 #
 #import socket
